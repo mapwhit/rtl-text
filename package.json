@@ -12,12 +12,13 @@
   "sideEffects": false,
   "exports": "./src/index.js",
   "scripts": {
-    "test": "make check"
+    "test": "make check",
+    "prepare": "make build"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4"
   },
   "files": [
-    "src"
+    "src/*.js"
   ]
 }
