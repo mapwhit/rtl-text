@@ -1,12 +1,12 @@
 {
-  "name": "@mapbox/mapbox-gl-rtl-text",
-  "version": "0.3.0",
-  "description": "Add support for RTL languages to mapbox-gl-js.",
+  "name": "@mapwhit/rtl-text",
+  "version": "0.0.0",
+  "description": "Support for RTL languages for @maphit/tilerenderer.",
   "license": "BSD-2-Clause",
   "author": "Mapbox",
   "repository": {
-    "url": "git://github.com/mapbox/mapbox-gl-rtl-text.git",
-    "type": "git"
+    "type": "git",
+    "url": "git+https://github.com/mapwhit/rtl-text.git"
   },
   "type": "module",
   "sideEffects": false,
