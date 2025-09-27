@@ -247,13 +247,11 @@ export default (async () => {
     return lines;
   }
 
-  if (self?.registerRTLTextPlugin) {
-    self.registerRTLTextPlugin({
-      applyArabicShaping,
-      processBidirectionalText,
-      processStyledBidirectionalText
-    });
-  }
+  globalThis.registerRTLTextPlugin?.({
+    applyArabicShaping,
+    processBidirectionalText,
+    processStyledBidirectionalText
+  });
 
   return {
     applyArabicShaping,
