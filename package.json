@@ -15,6 +15,7 @@
     "test": "make check"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.4"
   },
   "files": [
     "src"
