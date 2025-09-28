@@ -1,4 +1,4 @@
-import icu from './icu.wasm.js';
+import icu from './icu.js';
 
 export default (async () => {
   const Module = await icu();

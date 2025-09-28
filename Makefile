@@ -14,7 +14,7 @@ test-cov: test
 
 .PHONY: check format lint test test-cov
 
-WASM_JS = ./src/icu.wasm.js
+WASM_JS = ./src/icu.js
 C_FILES = $(wildcard ./src/*.c)
 OBJ_FILES = $(C_FILES:.c=.o)
 
@@ -32,7 +32,7 @@ $(WASM_JS): $(OBJ_FILES)
 		-s USE_ICU=1 \
 		-s ALLOW_MEMORY_GROWTH=1 \
 		-s DEAD_FUNCTIONS="[]" \
-		-s ENVIRONMENT="web,worker" \
+		-s ENVIRONMENT="node,web" \
 		-s EXIT_RUNTIME=0 \
 		-s EXPORT_ES6=1 \
 		-s EXPORTED_FUNCTIONS="['_ushape_arabic','_bidi_processText','_bidi_getLine','_bidi_getParagraphEndIndex','_bidi_setLine','_bidi_writeReverse','_bidi_getVisualRun','_malloc','_free']" \
@@ -41,7 +41,6 @@ $(WASM_JS): $(OBJ_FILES)
 		-s IMPORTED_MEMORY=1 \
 		-s INLINING_LIMIT=1 \
 		-s MODULARIZE=1 \
-		-s SINGLE_FILE=1 \
 		-s WASM_ASYNC_COMPILATION=1 \
 		-s WASM=1 \
 		--closure 0

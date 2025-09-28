@@ -19,6 +19,7 @@
     "@biomejs/biome": "2.2.4"
   },
   "files": [
-    "src/*.js"
+    "src/*.js",
+    "src/*.wasm"
   ]
 }
