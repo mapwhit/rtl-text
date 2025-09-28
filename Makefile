@@ -14,18 +14,19 @@ test-cov: test
 
 .PHONY: check format lint test test-cov
 
-WASM_JS = ./src/icu.js
+WASM_JS = ./src/icu.wasm.js
+WASM = ./src/icu.wasm
 C_FILES = $(wildcard ./src/*.c)
 OBJ_FILES = $(C_FILES:.c=.o)
 
-build: $(WASM_JS)
+build: $(WASM)
 
 .PHONY: build
 
 clean:
-	rm -f $(WASM_JS) $(OBJ_FILES)
+	rm -f $(WASM) $(WASM_JS) $(OBJ_FILES)
 
-# Compile ICU wrapper to WebAssembly, embed all subresources as base64 string literals and export as a ES module
+# Compile ICU wrapper to WebAssembly
 $(WASM_JS): $(OBJ_FILES)
 	emcc -Oz -v -o $@ \
 		$^ \
@@ -45,7 +46,12 @@ $(WASM_JS): $(OBJ_FILES)
 		-s WASM=1 \
 		--closure 0
 
-.INTERMEDIATE: $(OBJ_FILES)
+$(WASM_JS): $(OBJ_FILES)
+
+$(WASM): $(WASM_JS)
+	mv $(WASM_JS:.js=.wasm) $@
+
+.INTERMEDIATE: $(OBJ_FILES) $(WASM_JS)
 
 # Build ubidi and ushape wrappers
 %.o: %.c
