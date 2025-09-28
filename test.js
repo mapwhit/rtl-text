@@ -3,7 +3,7 @@ import test from 'node:test';
 
 import rtlText from './src/index.js';
 
-const { applyArabicShaping, processBidirectionalText, processStyledBidirectionalText } = await rtlText;
+const { applyArabicShaping, processBidirectionalText, processStyledBidirectionalText } = await rtlText();
 
 test('applyArabicShaping', () => {
   assert.equal(applyArabicShaping('سلام۳۹'), 'ﺳﻼﻡ۳۹');

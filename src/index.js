@@ -1,7 +1,18 @@
 import icu from './icu.js';
 
-export default (async () => {
-  const Module = await icu();
+function locateFile(file) {
+  return new URL(urlFromDataset(file) ?? file, document.baseURI);
+}
+
+function urlFromDataset(file) {
+  if (typeof document !== 'undefined') {
+    const el = document.getElementById('rtl-text');
+    return el?.getAttribute(`data-${file.replace('.', '-')}`);
+  }
+}
+
+export default async function makeModule(opts = { locateFile }) {
+  const Module = await icu(opts);
 
   /**
    * Takes logical input and replaces Arabic characters with the "presentation form"
@@ -258,4 +269,4 @@ export default (async () => {
     processBidirectionalText,
     processStyledBidirectionalText
   };
-})();
+}
