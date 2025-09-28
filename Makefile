@@ -36,8 +36,8 @@ $(WASM_JS): $(OBJ_FILES)
 		-s ENVIRONMENT="node,web" \
 		-s EXIT_RUNTIME=0 \
 		-s EXPORT_ES6=1 \
-		-s EXPORTED_FUNCTIONS="['_ushape_arabic','_bidi_processText','_bidi_getLine','_bidi_getParagraphEndIndex','_bidi_setLine','_bidi_writeReverse','_bidi_getVisualRun','_malloc','_free']" \
-		-s EXPORTED_RUNTIME_METHODS="['stringToUTF16','UTF16ToString','ccall','HEAPU8']" \
+		-s EXPORTED_FUNCTIONS=_ushape_arabic,_bidi_processText,_bidi_getLine,_bidi_getParagraphEndIndex,_bidi_setLine,_bidi_writeReverse,_bidi_getVisualRun,_malloc,_free \
+		-s EXPORTED_RUNTIME_METHODS=stringToUTF16,UTF16ToString,ccall,HEAPU8 \
 		-s FILESYSTEM=0 \
 		-s IMPORTED_MEMORY=1 \
 		-s INLINING_LIMIT=1 \

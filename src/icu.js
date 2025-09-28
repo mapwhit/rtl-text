@@ -1,6 +1,32 @@
 const UTF8Decoder = new TextDecoder();
 const UTF16Decoder = new TextDecoder('utf-16le');
 
+// generate by passing: `--emit-minification-map  $@.map`
+const IMPORT_MAP = {
+  memory: 'a',
+  emscripten_resize_heap: 'b',
+  _abort_js: 'c',
+  __wasm_call_ctors: 'd'
+};
+
+const EXPORT_MAP = {
+  bidi_processText: 'e',
+  bidi_getParagraphEndIndex: 'f',
+  bidi_getVisualRun: 'g',
+  bidi_setLine: 'h',
+  bidi_writeReverse: 'i',
+  malloc: 'j',
+  bidi_getLine: 'k',
+  ushape_arabic: 'l',
+  free: 'm'
+};
+
+const INTERNAL_MAP = {
+  _emscripten_stack_restore: 'n',
+  _emscripten_stack_alloc: 'o',
+  emscripten_stack_get_current: 'p'
+};
+
 export default async function Module(moduleArg = {}, { instantiateAsync }) {
   const Module = moduleArg;
 
@@ -17,12 +43,16 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
   Module['UTF16ToString'] = UTF16ToString;
   Module['stringToUTF16'] = stringToUTF16;
 
-  let __emscripten_stack_restore;
-  let __emscripten_stack_alloc;
-  let _emscripten_stack_get_current;
+  let stackRestore;
+  let stackAlloc;
+  let stackGetCurrent;
 
   const wasmMemory = initMemory();
-  const wasmImports = { c: abort, b: _emscripten_resize_heap, a: wasmMemory };
+  const wasmImports = {
+    [IMPORT_MAP['_abort_js']]: abort,
+    [IMPORT_MAP['emscripten_resize_heap']]: resizeHeap,
+    [IMPORT_MAP['memory']]: wasmMemory
+  };
   const wasmExports = await createWasm();
 
   run();
@@ -36,18 +66,12 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
   });
 
   function assignWasmExports(exports) {
-    Module['_bidi_processText'] = exports['e'];
-    Module['_bidi_getParagraphEndIndex'] = exports['f'];
-    Module['_bidi_getVisualRun'] = exports['g'];
-    Module['_bidi_setLine'] = exports['h'];
-    Module['_bidi_writeReverse'] = exports['i'];
-    Module['_malloc'] = exports['j'];
-    Module['_bidi_getLine'] = exports['k'];
-    Module['_ushape_arabic'] = exports['l'];
-    Module['_free'] = exports['m'];
-    __emscripten_stack_restore = exports['n'];
-    __emscripten_stack_alloc = exports['o'];
-    _emscripten_stack_get_current = exports['p'];
+    for (const [name, min] of Object.entries(EXPORT_MAP)) {
+      Module[`_${name}`] = exports[min];
+    }
+    stackRestore = exports[INTERNAL_MAP['_emscripten_stack_restore']];
+    stackAlloc = exports[INTERNAL_MAP['_emscripten_stack_alloc']];
+    stackGetCurrent = exports[INTERNAL_MAP['emscripten_stack_get_current']];
   }
 
   function abort(what = '') {
@@ -101,7 +125,7 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
         return ret;
       },
       array: arr => {
-        const ret = __emscripten_stack_alloc(arr.length);
+        const ret = stackAlloc(arr.length);
         HEAP8.set(arr, ret);
 
         return ret;
@@ -115,7 +139,7 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
       for (let i = 0; i < args.length; i++) {
         const converter = toC[argTypes[i]];
         if (converter) {
-          if (stack === 0) stack = _emscripten_stack_get_current();
+          if (stack === 0) stack = stackGetCurrent();
           cArgs[i] = converter(args[i]);
         } else {
           cArgs[i] = args[i];
@@ -128,7 +152,7 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
     return onDone(ret);
 
     function onDone(ret) {
-      if (stack !== 0) __emscripten_stack_restore(stack);
+      if (stack !== 0) stackRestore(stack);
       return convertReturnValue(ret);
     }
 
@@ -141,7 +165,7 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
     }
   }
 
-  function _emscripten_resize_heap(requestedSize) {
+  function resizeHeap(requestedSize) {
     const oldSize = HEAPU8.length;
     requestedSize >>>= 0;
     const maxHeapSize = 2147483648;
@@ -162,7 +186,7 @@ export default async function Module(moduleArg = {}, { instantiateAsync }) {
 
   function stringToUTF8OnStack(str) {
     const size = lengthBytesUTF8(str) + 1;
-    const ret = __emscripten_stack_alloc(size);
+    const ret = stackAlloc(size);
     stringToUTF8Array(str, HEAPU8, ret, size);
     return ret;
   }
