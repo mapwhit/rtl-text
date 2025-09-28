@@ -11,6 +11,12 @@
   "type": "module",
   "sideEffects": false,
   "exports": "./src/index.js",
+  "imports": {
+    "#instantiate": {
+      "node": "./src/node.js",
+      "default": "./src/browser.js"
+    }
+  },
   "scripts": {
     "test": "make check",
     "prepare": "make build"

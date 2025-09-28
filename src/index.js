@@ -1,18 +1,8 @@
+import instantiateAsync from '#instantiate';
 import icu from './icu.js';
 
-function locateFile(file) {
-  return new URL(urlFromDataset(file) ?? file, document.baseURI);
-}
-
-function urlFromDataset(file) {
-  if (typeof document !== 'undefined') {
-    const el = document.getElementById('rtl-text');
-    return el?.getAttribute(`data-${file.replace('.', '-')}`);
-  }
-}
-
-export default async function makeModule(opts = { locateFile }) {
-  const Module = await icu(opts);
+export default async function makeModule() {
+  const Module = await icu({}, { instantiateAsync });
 
   /**
    * Takes logical input and replaces Arabic characters with the "presentation form"
