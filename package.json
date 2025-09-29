@@ -1,6 +1,6 @@
 {
   "name": "@mapwhit/rtl-text",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Support for RTL languages for @maphit/tilerenderer.",
   "license": "BSD-2-Clause",
   "author": "Mapbox",
