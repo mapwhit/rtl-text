@@ -1,7 +1,8 @@
-import icu from './icu.wasm.js';
+import instantiateAsync from '#instantiate';
+import icu from './icu.js';
 
-export default (async () => {
-  const Module = await icu();
+export default async function makeModule() {
+  const Module = await icu({}, { instantiateAsync });
 
   /**
    * Takes logical input and replaces Arabic characters with the "presentation form"
@@ -258,4 +259,4 @@ export default (async () => {
     processBidirectionalText,
     processStyledBidirectionalText
   };
-})();
+}
